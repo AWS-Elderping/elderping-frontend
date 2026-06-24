@@ -16,4 +16,6 @@ export const API_BASE = {
   health:   '/api/health',
   reminder: '/api/reminder',
   alert:    '/api/alert',
+  notes:    '/api/notes',
+  ai:       '/api/ai',
 };
