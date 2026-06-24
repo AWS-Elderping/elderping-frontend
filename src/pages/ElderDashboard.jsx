@@ -17,7 +17,9 @@ import {
   MedicationWidget,
   AppointmentWidget,
   TimelineWidget,
-  DocumentWidget
+  DocumentWidget,
+  NotesWidget,
+  AIChatWidget
 } from '../components/DashboardWidgets';
 
 export default function ElderDashboard() {
@@ -357,16 +359,22 @@ export default function ElderDashboard() {
                 <AppointmentWidget appointments={dashboardData?.upcomingAppointments || []} />
               </div>
               <div className="space-y-6">
-                <DocumentWidget 
-                  documents={dashboardData?.medicalDocuments || []} 
-                  onUpload={handleUploadDocument} 
-                  onDownload={handleDownloadDocument} 
+                <DocumentWidget
+                  documents={dashboardData?.medicalDocuments || []}
+                  onUpload={handleUploadDocument}
+                  onDownload={handleDownloadDocument}
                   onDelete={handleDeleteDocument}
                   uploadLoading={uploadLoading}
                   elderId={user?.id}
                 />
                 <TimelineWidget timeline={timeline || []} />
               </div>
+            </div>
+
+            {/* Notes & AI row */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <NotesWidget elderId={user?.id} />
+              <AIChatWidget userId={user?.id} />
             </div>
           </div>
         )}

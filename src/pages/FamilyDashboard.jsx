@@ -21,7 +21,9 @@ import {
   DocumentWidget,
   LineChart,
   BloodPressureChart,
-  AdherenceTrendChart
+  AdherenceTrendChart,
+  NotesWidget,
+  AIChatWidget
 } from '../components/DashboardWidgets';
 
 export default function FamilyDashboard() {
@@ -296,13 +298,6 @@ export default function FamilyDashboard() {
               </div>
             </div>
 
-            {/* Partial error banner */}
-            {fetchError && (
-              <div className="mb-6 bg-red-50 border-l-4 border-red-500 text-red-800 rounded-xl p-5 shadow-sm font-medium">
-                ⚠️ {fetchError}
-              </div>
-            )}
-
             {/* Status hero card */}
             <div className={`rounded-[2rem] shadow-xl p-10 mb-8 flex flex-col md:flex-row md:items-center justify-between text-white relative overflow-hidden border border-white/20 ${
               loading
@@ -421,14 +416,20 @@ export default function FamilyDashboard() {
                   {/* Right Column: Timeline & Documents */}
                   <div className="space-y-6">
                     <h3 className="text-2xl font-extrabold text-gray-800 px-1">Activity & Care Records</h3>
-                    <DocumentWidget 
-                      documents={dashboardData?.medicalDocuments || []} 
-                      onDownload={handleDownloadDocument} 
+                    <DocumentWidget
+                      documents={dashboardData?.medicalDocuments || []}
+                      onDownload={handleDownloadDocument}
                       onDelete={handleDeleteDocument}
                       elderId={selectedElderId}
                     />
                     <TimelineWidget timeline={timeline || []} />
                   </div>
+                </div>
+
+                {/* Notes & AI row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <NotesWidget elderId={selectedElderId} />
+                  <AIChatWidget userId={selectedElderId} />
                 </div>
               </div>
             )}
