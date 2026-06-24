@@ -62,3 +62,4 @@ jobs:
           else
             git commit -m "deploy: update frontend image to ${{ github.sha }}"
             git push origin main
+          fi
