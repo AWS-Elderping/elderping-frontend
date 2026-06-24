@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import { Pill, Activity, Calendar, FileText, AlertTriangle, CheckCircle2, Clock, Upload, ArrowDown, ShieldAlert, XCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Pill, Activity, Calendar, FileText, AlertTriangle, CheckCircle2, Clock, Upload, ArrowDown, ShieldAlert, XCircle, Sparkles, StickyNote, Trash2 } from 'lucide-react';
+import { getNotes, createNote, deleteNote, generateAiNote } from '../api/notesApi';
+import { queryAI } from '../api/aiApi';
 
 // ==========================================
 // 1. RISK SCORE WIDGET
@@ -667,6 +669,216 @@ export function AdherenceTrendChart({ weekly, monthly, overall }) {
           </linearGradient>
         </defs>
       </svg>
+    </div>
+  );
+}
+
+// ==========================================
+// NOTES WIDGET
+// ==========================================
+export function NotesWidget({ elderId }) {
+  const [notes, setNotes]         = useState([]);
+  const [loading, setLoading]     = useState(false);
+  const [text, setText]           = useState('');
+  const [category, setCategory]   = useState('PATIENT');
+  const [saving, setSaving]       = useState(false);
+  const [aiGen, setAiGen]         = useState(false);
+  const [error, setError]         = useState('');
+
+  const load = async () => {
+    if (!elderId) return;
+    setLoading(true);
+    try {
+      const data = await getNotes(elderId);
+      setNotes(Array.isArray(data) ? data : []);
+    } catch { /* silent */ }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { load(); }, [elderId]);
+
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    if (!text.trim()) return;
+    setSaving(true); setError('');
+    try {
+      await createNote({ userId: elderId, elderId, category, content: text });
+      setText('');
+      await load();
+    } catch (err) { setError(err.message); }
+    finally { setSaving(false); }
+  };
+
+  const handleAiNote = async () => {
+    setAiGen(true); setError('');
+    try {
+      await generateAiNote({ elderId });
+      await load();
+    } catch (err) { setError(err.message); }
+    finally { setAiGen(false); }
+  };
+
+  const handleDelete = async (id) => {
+    try { await deleteNote(id); await load(); }
+    catch (err) { setError(err.message); }
+  };
+
+  const categoryColors = {
+    PATIENT:   'bg-blue-100 text-blue-700',
+    FAMILY:    'bg-green-100 text-green-700',
+    CAREGIVER: 'bg-orange-100 text-orange-700',
+    DOCTOR:    'bg-purple-100 text-purple-700',
+    AI:        'bg-pink-100 text-pink-700',
+  };
+
+  return (
+    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+      <h3 className="font-bold text-gray-800 flex items-center gap-2 mb-4">
+        <StickyNote className="w-5 h-5 text-indigo-500" /> Clinical Notes
+      </h3>
+
+      {error && <p className="text-red-600 text-sm mb-3 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+
+      <form onSubmit={handleAdd} className="mb-4 space-y-2">
+        <div className="flex gap-2">
+          <select
+            value={category}
+            onChange={e => setCategory(e.target.value)}
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:border-indigo-400"
+          >
+            <option value="PATIENT">Patient</option>
+            <option value="FAMILY">Family</option>
+            <option value="CAREGIVER">Caregiver</option>
+            <option value="DOCTOR">Doctor</option>
+          </select>
+          <button
+            type="button"
+            onClick={handleAiNote}
+            disabled={aiGen}
+            className="flex items-center gap-1 bg-purple-100 hover:bg-purple-200 text-purple-700 text-sm font-semibold px-3 py-2 rounded-lg transition-colors disabled:opacity-50"
+          >
+            <Sparkles className="w-4 h-4" />
+            {aiGen ? 'Generating…' : 'AI Note'}
+          </button>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={text}
+            onChange={e => setText(e.target.value)}
+            placeholder="Add a note…"
+            className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+          />
+          <button
+            type="submit"
+            disabled={saving || !text.trim()}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors disabled:opacity-50"
+          >
+            {saving ? '…' : 'Add'}
+          </button>
+        </div>
+      </form>
+
+      {loading ? (
+        <p className="text-gray-400 text-sm text-center py-4">Loading notes…</p>
+      ) : notes.length === 0 ? (
+        <p className="text-gray-400 text-sm text-center italic py-4">No notes yet.</p>
+      ) : (
+        <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
+          {notes.map(note => (
+            <div key={note.id} className="border border-gray-100 rounded-xl p-3 hover:border-indigo-100 transition-colors">
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${categoryColors[note.note_category] || 'bg-gray-100 text-gray-600'}`}>
+                    {note.note_category}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    {note.author_name || 'Unknown'} · {new Date(note.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+                <button onClick={() => handleDelete(note.id)} className="text-gray-300 hover:text-red-400 transition-colors">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <p className="text-sm text-gray-700 leading-relaxed">{note.content}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ==========================================
+// AI HEALTH ASSISTANT WIDGET
+// ==========================================
+export function AIChatWidget({ userId }) {
+  const [query, setQuery]       = useState('');
+  const [response, setResponse] = useState('');
+  const [loading, setLoading]   = useState(false);
+  const [capability, setCap]    = useState('qa');
+  const [error, setError]       = useState('');
+
+  const handleAsk = async (e) => {
+    e.preventDefault();
+    if (!query.trim() || !userId) return;
+    setLoading(true); setResponse(''); setError('');
+    try {
+      const res = await queryAI({ userId, capability, query });
+      setResponse(res.result);
+    } catch (err) { setError(err.message); }
+    finally { setLoading(false); }
+  };
+
+  return (
+    <div className="bg-gradient-to-br from-purple-50 to-indigo-50 p-6 rounded-2xl border border-purple-100 shadow-sm">
+      <h3 className="font-bold text-gray-800 flex items-center gap-2 mb-4">
+        <Sparkles className="w-5 h-5 text-purple-500" />
+        AI Health Assistant
+        <span className="ml-auto text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-semibold">Nova Lite</span>
+      </h3>
+
+      <form onSubmit={handleAsk} className="space-y-3 mb-4">
+        <select
+          value={capability}
+          onChange={e => setCap(e.target.value)}
+          className="w-full border border-purple-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-300"
+        >
+          <option value="qa">General Q&amp;A</option>
+          <option value="symptom_check">Symptom Check</option>
+          <option value="medication">Medication Advice</option>
+          <option value="risk_assessment">Risk Assessment</option>
+        </select>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Ask a health question…"
+            className="flex-1 border border-purple-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 bg-white"
+          />
+          <button
+            type="submit"
+            disabled={loading || !query.trim()}
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-opacity disabled:opacity-50"
+          >
+            {loading ? '…' : 'Ask'}
+          </button>
+        </div>
+      </form>
+
+      {error && <p className="text-red-600 text-sm bg-red-50 px-3 py-2 rounded-xl mb-3">{error}</p>}
+
+      {response ? (
+        <div className="bg-white rounded-xl p-4 border border-purple-100 shadow-sm">
+          <p className="text-xs font-bold text-purple-600 mb-2 flex items-center gap-1">
+            <Sparkles className="w-3.5 h-3.5" /> AI Response
+          </p>
+          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{response}</p>
+        </div>
+      ) : (
+        !error && <p className="text-gray-400 text-sm text-center italic">Ask any health question above.</p>
+      )}
     </div>
   );
 }
