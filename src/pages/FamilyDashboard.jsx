@@ -47,7 +47,7 @@ export default function FamilyDashboard() {
   const [linkLoading, setLinkLoading] = useState(false);
 
   // Add Med form
-  const [medForm, setMedForm] = useState({ name: '', dosage: '', time: '08:00' });
+  const [medForm, setMedForm] = useState({ name: '', dosage: '', time: '08:00', frequency: 'DAILY' });
   const [medLoading, setMedLoading] = useState(false);
 
   // Redirect if not logged in
@@ -126,9 +126,10 @@ export default function FamilyDashboard() {
         userId: selectedElderId,
         medicationName: medForm.name,
         dosage: medForm.dosage,
-        timeOfDay: medForm.time + ':00'
+        frequency: medForm.frequency,
+        scheduledTime: medForm.time + ':00'
       });
-      setMedForm({ name: '', dosage: '', time: '08:00' });
+      setMedForm({ name: '', dosage: '', time: '08:00', frequency: 'DAILY' });
       fetchData();
     } catch (err) {
       alert("Failed to add medication: " + (err.response?.data?.error || err.message));
@@ -361,6 +362,12 @@ export default function FamilyDashboard() {
                       <form onSubmit={handleAddMed} className="flex flex-col md:flex-row gap-4">
                         <input type="text" placeholder="Medication Name" value={medForm.name} onChange={e=>setMedForm({...medForm, name: e.target.value})} className="flex-1 bg-gray-50 border-2 border-indigo-100 rounded-xl px-4 py-3 font-medium text-gray-800 focus:border-indigo-400 focus:outline-none" required />
                         <input type="text" placeholder="Dosage (e.g. 1 pill)" value={medForm.dosage} onChange={e=>setMedForm({...medForm, dosage: e.target.value})} className="w-full md:w-40 bg-gray-50 border-2 border-indigo-100 rounded-xl px-4 py-3 font-medium text-gray-800 focus:border-indigo-400 focus:outline-none" required />
+                        <select value={medForm.frequency} onChange={e=>setMedForm({...medForm, frequency: e.target.value})} className="w-full md:w-36 bg-gray-50 border-2 border-indigo-100 rounded-xl px-4 py-3 font-medium text-gray-800 focus:border-indigo-400 focus:outline-none">
+                          <option value="DAILY">Daily</option>
+                          <option value="TWICE_DAILY">Twice Daily</option>
+                          <option value="WEEKLY">Weekly</option>
+                          <option value="AS_NEEDED">As Needed</option>
+                        </select>
                         <input type="time" value={medForm.time} onChange={e=>setMedForm({...medForm, time: e.target.value})} className="w-full md:w-32 bg-gray-50 border-2 border-indigo-100 rounded-xl px-4 py-3 font-bold text-gray-800 focus:border-indigo-400 focus:outline-none" required />
                         <button type="submit" disabled={medLoading} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold px-8 py-3 rounded-xl shadow-md transition-all active:scale-95 disabled:opacity-50">
                           {medLoading ? 'Adding...' : 'Add'}

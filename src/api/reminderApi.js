@@ -5,7 +5,7 @@ const BASE = API_BASE.reminder;
 
 /**
  * Create a new medication reminder.
- * @param {{ userId, medicationName, dosage, timeOfDay }} payload
+ * @param {{ userId, medicationName, dosage, frequency, scheduledTime }} payload
  */
 export const createReminder = (payload) => client.post(`${BASE}/reminders`, payload);
 
