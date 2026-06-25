@@ -18,4 +18,5 @@ export const API_BASE = {
   alert:    '/api/alert',
   notes:    '/api/notes',
   ai:       '/api/ai',
+  finops:   '/api/finops',
 };
