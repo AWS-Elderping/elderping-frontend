@@ -47,6 +47,7 @@ export default function Login() {
       const finalRole = (data.user.role || '').toUpperCase();
       if (finalRole === 'ELDER') navigate('/elder');
       else if (finalRole === 'FAMILY') navigate('/family');
+      else if (finalRole === 'DOCTOR') navigate('/doctor');
       else if (finalRole === 'ADMIN') navigate('/admin');
       else if (finalRole === 'SUPER_ADMIN') navigate('/super-admin');
       else navigate('/family');
@@ -71,29 +72,29 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-6 font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 flex items-center justify-center p-6 font-sans">
       <div className="w-full max-w-md">
 
         {/* Logo */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-white/20 backdrop-blur-md rounded-full shadow-xl mb-4 border border-white/30">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-white/10 backdrop-blur-md rounded-full shadow-xl mb-4 border border-white/20">
             <HeartPulse className="w-14 h-14 text-white" strokeWidth={1.5} />
           </div>
           <h1 className="text-5xl font-extrabold text-white tracking-tight drop-shadow-lg">ElderPing</h1>
-          <p className="text-white/80 mt-2 text-xl font-medium">Your Daily Care Companion</p>
+          <p className="text-white/70 mt-2 text-xl font-medium">Your Daily Care Companion</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-2xl p-10 border border-white/50 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-pink-500"></div>
-          
-          <h2 className="text-3xl font-extrabold text-gray-800 mb-8 text-center tracking-tight">Welcome Back</h2>
+        <div className="bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-2xl p-10 border border-gray-200 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-gray-700 to-black"></div>
+
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-8 text-center tracking-tight">Welcome Back</h2>
 
           {error && (
             <div
               id="login-error"
               role="alert"
-              className="mb-6 bg-red-50 border-2 border-red-400 text-red-700 rounded-xl p-4 text-lg font-medium text-center"
+              className="mb-6 bg-gray-100 border-2 border-gray-800 text-gray-900 rounded-xl p-4 text-lg font-semibold text-center"
             >
               {error}
             </div>
@@ -112,7 +113,7 @@ export default function Login() {
                 placeholder="Enter your email or username"
                 required
                 autoComplete="email"
-                className="w-full border-2 border-gray-300 rounded-xl px-5 py-4 text-xl text-gray-800 focus:outline-none focus:border-blue-600 transition-colors"
+                className="w-full border-2 border-gray-300 rounded-xl px-5 py-4 text-xl text-gray-800 focus:outline-none focus:border-black transition-colors"
               />
             </div>
 
@@ -129,7 +130,7 @@ export default function Login() {
                   placeholder="Enter your password"
                   required
                   autoComplete="current-password"
-                  className="w-full border-2 border-gray-300 rounded-xl px-5 py-4 text-xl text-gray-800 focus:outline-none focus:border-blue-600 transition-colors pr-16"
+                  className="w-full border-2 border-gray-300 rounded-xl px-5 py-4 text-xl text-gray-800 focus:outline-none focus:border-black transition-colors pr-16"
                 />
                 <button
                   type="button"
@@ -146,7 +147,7 @@ export default function Login() {
               id="login-submit"
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-indigo-400 disabled:to-purple-400 text-white text-xl font-bold py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white text-xl font-bold py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {loading ? (
                 <span className="animate-spin inline-block w-6 h-6 border-4 border-white/30 border-t-white rounded-full" />
@@ -162,7 +163,7 @@ export default function Login() {
             <Link
               id="go-to-register"
               to="/register"
-              className="text-indigo-600 font-bold hover:text-indigo-800 transition-colors"
+              className="text-gray-900 font-bold underline hover:text-black transition-colors"
             >
               Register here
             </Link>

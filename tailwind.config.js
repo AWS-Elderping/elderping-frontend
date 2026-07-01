@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        elderPrimary: '#1d4ed8', // High contrast blue
+        elderPrimary: '#111827', // Near-black, high contrast
         elderBg: '#f8fafc',
       },
       fontFamily: {

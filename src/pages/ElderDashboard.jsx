@@ -101,10 +101,10 @@ export default function ElderDashboard() {
     try {
       await checkIn(user.id, 'feeling_well');
       setCheckedIn(true);
-      showStatus('✅ Check-in recorded! Your family has been notified.', 'success');
+      showStatus('Check-in recorded. Your family has been notified.', 'success');
       await fetchDashboardData(); // Automatic refresh
     } catch (err) {
-      showStatus(`⚠️ ${err.message}`, 'error');
+      showStatus(err.message, 'error');
     } finally {
       setCheckInLoading(false);
     }
@@ -117,10 +117,10 @@ export default function ElderDashboard() {
     try {
       await logVitals(user.id, parseInt(vitalsForm.heartRate), vitalsForm.bloodPressure);
       setVitalsForm({ heartRate: '', bloodPressure: '' });
-      showStatus('💓 Vitals successfully recorded!', 'success');
+      showStatus('Vitals successfully recorded.', 'success');
       await fetchDashboardData(); // Automatic refresh
     } catch (err) {
-      showStatus(`⚠️ ${err.message}`, 'error');
+      showStatus(err.message, 'error');
     } finally {
       setVitalsLoading(false);
     }
@@ -130,10 +130,10 @@ export default function ElderDashboard() {
     setMedLoading(reminder.id);
     try {
       await markTaken(reminder.id);
-      showStatus(`💊 "${reminder.medication_name}" marked as taken!`, 'success');
+      showStatus(`"${reminder.medication_name}" marked as taken.`, 'success');
       await fetchDashboardData(); // Refresh data to update adherence & logs
     } catch (err) {
-      showStatus(`⚠️ ${err.message}`, 'error');
+      showStatus(err.message, 'error');
     } finally {
       setMedLoading(null);
     }
@@ -143,11 +143,11 @@ export default function ElderDashboard() {
     setUploadLoading(true);
     try {
       await uploadDocument(formData);
-      showStatus('📁 Medical document uploaded successfully!', 'success');
+      showStatus('Medical document uploaded successfully.', 'success');
       await fetchDashboardData();
       return true;
     } catch (err) {
-      showStatus(`⚠️ Document upload failed: ${err.message}`, 'error');
+      showStatus(`Document upload failed: ${err.message}`, 'error');
       return false;
     } finally {
       setUploadLoading(false);
@@ -164,22 +164,22 @@ export default function ElderDashboard() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        showStatus('📥 Download started!', 'success');
+        showStatus('Download started.', 'success');
       } else {
         throw new Error('Download URL not returned from the server.');
       }
     } catch (err) {
-      showStatus(`⚠️ Download failed: ${err.message}`, 'error');
+      showStatus(`Download failed: ${err.message}`, 'error');
     }
   };
 
   const handleDeleteDocument = async (doc) => {
     try {
       await deleteDocument(doc.id);
-      showStatus('🗑️ Document deleted successfully!', 'success');
+      showStatus('Document deleted successfully.', 'success');
       await fetchDashboardData();
     } catch (err) {
-      showStatus(`⚠️ Deletion failed: ${err.message}`, 'error');
+      showStatus(`Deletion failed: ${err.message}`, 'error');
     }
   };
 
@@ -192,18 +192,18 @@ export default function ElderDashboard() {
   const dateStr = time.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-pink-50 font-sans pb-10">
+    <div className="min-h-screen bg-gray-50 font-sans pb-10">
       {/* Header */}
-      <header className="bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-900 text-white px-6 py-5 flex items-center justify-between shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 to-indigo-500"></div>
+      <header className="bg-black text-white px-6 py-5 flex items-center justify-between shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gray-600 to-gray-300"></div>
         <div className="flex items-center gap-3 relative z-10">
-          <HeartPulse className="w-10 h-10 text-pink-400" />
+          <HeartPulse className="w-10 h-10 text-white" />
           <span className="text-3xl font-extrabold tracking-tight drop-shadow-md">ElderPing</span>
         </div>
         <div className="flex items-center gap-6 relative z-10">
           <div className="text-right hidden sm:block">
             <p className="text-2xl font-bold tracking-tight">{timeStr}</p>
-            <p className="text-indigo-200 text-sm font-medium">{dateStr}</p>
+            <p className="text-gray-300 text-sm font-medium">{dateStr}</p>
           </div>
           <button
             id="logout-btn"
@@ -219,16 +219,16 @@ export default function ElderDashboard() {
         {/* Welcome */}
         <div className="bg-white/80 backdrop-blur-lg rounded-[2rem] shadow-xl p-8 mb-8 flex items-center justify-between border border-white/60">
           <div className="flex items-center gap-5">
-            <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-4 shadow-lg">
+            <div className="bg-black rounded-2xl p-4 shadow-lg">
               <User className="w-10 h-10 text-white" />
             </div>
             <div>
-              <p className="text-indigo-600 font-bold uppercase tracking-widest text-sm mb-1">Welcome Back</p>
+              <p className="text-gray-500 font-bold uppercase tracking-widest text-sm mb-1">Welcome Back</p>
               <h1 className="text-4xl font-extrabold text-gray-900 drop-shadow-sm capitalize">{user?.username || 'Friend'}</h1>
               {user?.invite_code && (
-                <div className="mt-2 inline-flex items-center gap-2 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg shadow-sm">
-                  <span className="text-xs font-bold text-indigo-500 uppercase">Invite Code:</span>
-                  <span className="text-sm font-mono font-extrabold text-indigo-800 tracking-wider">{user.invite_code}</span>
+                <div className="mt-2 inline-flex items-center gap-2 bg-gray-100 border border-gray-300 px-3 py-1.5 rounded-lg shadow-sm">
+                  <span className="text-xs font-bold text-gray-500 uppercase">Invite Code:</span>
+                  <span className="text-sm font-mono font-extrabold text-gray-900 tracking-wider">{user.invite_code}</span>
                 </div>
               )}
             </div>
@@ -241,7 +241,7 @@ export default function ElderDashboard() {
             <div className="flex -space-x-2">
               {linkedFamily.length > 0 ? (
                 linkedFamily.map((f, i) => (
-                  <div key={f.id} className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 border-2 border-white flex items-center justify-center text-white font-bold shadow-md z-10" style={{ zIndex: 10 - i }} title={f.username}>
+                  <div key={f.id} className="w-10 h-10 rounded-full bg-gray-800 border-2 border-white flex items-center justify-center text-white font-bold shadow-md z-10" style={{ zIndex: 10 - i }} title={f.username}>
                     {f.username.charAt(0).toUpperCase()}
                   </div>
                 ))
@@ -256,22 +256,22 @@ export default function ElderDashboard() {
         {statusMessage && (
           <div className={`mb-6 rounded-2xl p-5 text-xl font-semibold text-center ${
             statusType === 'success'
-              ? 'bg-green-100 text-green-800 border-2 border-green-400'
-              : 'bg-red-100 text-red-800 border-2 border-red-400'
+              ? 'bg-gray-900 text-white border-2 border-black'
+              : 'bg-gray-100 text-gray-900 border-2 border-gray-800'
           }`}>
             {statusMessage}
           </div>
         )}
 
         {dashboardError && (
-          <div className="mb-6 bg-red-100 border-2 border-red-400 text-red-800 rounded-2xl p-5 text-lg font-semibold text-center">
-            ⚠️ {dashboardError}
+          <div className="mb-6 bg-gray-100 border-2 border-gray-800 text-gray-900 rounded-2xl p-5 text-lg font-semibold text-center">
+            {dashboardError}
           </div>
         )}
 
         {loading && !dashboardData ? (
-          <div className="flex flex-col items-center justify-center py-20 text-indigo-600 gap-3">
-            <span className="animate-spin w-16 h-16 border-4 border-indigo-600/30 border-t-indigo-600 rounded-full" />
+          <div className="flex flex-col items-center justify-center py-20 text-gray-700 gap-3">
+            <span className="animate-spin w-16 h-16 border-4 border-gray-300 border-t-gray-800 rounded-full" />
             <p className="text-xl font-bold">Loading dashboard details...</p>
           </div>
         ) : (
@@ -285,8 +285,8 @@ export default function ElderDashboard() {
                   disabled={checkedIn || checkInLoading}
                   className={`w-full h-full py-12 rounded-[2.5rem] flex flex-col items-center justify-center gap-4 shadow-2xl text-white text-3xl font-extrabold transition-all border border-white/20 relative overflow-hidden ${
                     checkedIn
-                      ? 'bg-gradient-to-br from-green-500 to-emerald-600 cursor-default shadow-green-500/30'
-                      : 'bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 hover:shadow-indigo-500/40 active:scale-95'
+                      ? 'bg-gray-800 cursor-default shadow-black/30'
+                      : 'bg-black hover:shadow-black/40 active:scale-95'
                   }`}
                 >
                   <div className="absolute -top-24 -right-24 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl pointer-events-none"></div>
@@ -296,7 +296,7 @@ export default function ElderDashboard() {
                   ) : (
                     <CheckCircle2 className="w-20 h-20 drop-shadow-md" strokeWidth={2} />
                   )}
-                  <span className="drop-shadow-md">{checkedIn ? 'Checked In! ✓' : checkInLoading ? 'Sending…' : "I'm Doing Well"}</span>
+                  <span className="drop-shadow-md">{checkedIn ? 'Checked In!' : checkInLoading ? 'Sending…' : "I'm Doing Well"}</span>
                   <span className="text-lg font-medium opacity-90 tracking-wide drop-shadow-sm text-center px-4">
                     {checkedIn
                       ? 'Your family knows you are safe.'
@@ -307,7 +307,7 @@ export default function ElderDashboard() {
 
               <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] shadow-xl p-8 border border-white/60 h-full flex flex-col justify-center">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                  <Activity className="w-7 h-7 text-pink-500" /> Log Vitals
+                  <Activity className="w-7 h-7 text-gray-700" /> Log Vitals
                 </h2>
                 <form onSubmit={handleLogVitals} className="flex flex-col gap-5">
                   <div>
@@ -317,7 +317,7 @@ export default function ElderDashboard() {
                       placeholder="e.g. 72" 
                       value={vitalsForm.heartRate} 
                       onChange={e => setVitalsForm({...vitalsForm, heartRate: e.target.value})} 
-                      className="w-full bg-gray-50 border-2 border-indigo-100 rounded-2xl px-5 py-4 text-xl font-bold text-gray-800 focus:outline-none focus:border-indigo-400 transition-colors" 
+                      className="w-full bg-gray-50 border-2 border-gray-200 rounded-2xl px-5 py-4 text-xl font-bold text-gray-800 focus:outline-none focus:border-black transition-colors"
                       required 
                     />
                   </div>
@@ -330,14 +330,14 @@ export default function ElderDashboard() {
                       onChange={e => setVitalsForm({...vitalsForm, bloodPressure: e.target.value})} 
                       pattern="\d{2,3}/\d{2,3}"
                       title="Please enter blood pressure in the format SYS/DIA (e.g., 120/80)"
-                      className="w-full bg-gray-50 border-2 border-indigo-100 rounded-2xl px-5 py-4 text-xl font-bold text-gray-800 focus:outline-none focus:border-indigo-400 transition-colors" 
+                      className="w-full bg-gray-50 border-2 border-gray-200 rounded-2xl px-5 py-4 text-xl font-bold text-gray-800 focus:outline-none focus:border-black transition-colors"
                       required 
                     />
                   </div>
                   <button 
                     type="submit" 
                     disabled={vitalsLoading}
-                    className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold text-xl py-4 rounded-2xl shadow-lg transition-all active:scale-95 disabled:opacity-50 mt-2"
+                    className="w-full bg-black hover:bg-gray-800 text-white font-bold text-xl py-4 rounded-2xl shadow-lg transition-all active:scale-95 disabled:opacity-50 mt-2"
                   >
                     {vitalsLoading ? 'Saving...' : 'Save Vitals'}
                   </button>

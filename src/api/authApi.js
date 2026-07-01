@@ -39,6 +39,15 @@ export const getLinkedElders = () => client.get(`${BASE}/links/elders`);
 /** Get all family members linked to the logged-in elder */
 export const getLinkedFamily = () => client.get(`${BASE}/links/family`);
 
+/** List all registered doctors (for Family to pick from) */
+export const listDoctors = () => client.get(`${BASE}/doctors`);
+
+/** Assign a doctor to an elder (Family-only action) */
+export const assignDoctor = (elderId, doctorId) => client.post(`${BASE}/doctors/assign`, { elderId, doctorId });
+
+/** Get all patients (elders) assigned to the logged-in doctor */
+export const getMyPatients = () => client.get(`${BASE}/doctor-links/my-patients`);
+
 /** Clear localStorage session */
 export const logout = () => {
   localStorage.removeItem('token');

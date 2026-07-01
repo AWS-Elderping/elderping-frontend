@@ -48,26 +48,26 @@ export default function AdminDashboard() {
       <aside className="w-80 bg-slate-900 text-white flex flex-col justify-between p-6 shadow-xl">
         <div>
           <div className="flex items-center gap-3 mb-10">
-            <HeartPulse className="w-10 h-10 text-cyan-400" />
+            <HeartPulse className="w-10 h-10 text-white" />
             <h1 className="text-2xl font-bold tracking-tight">ElderPinq Ops</h1>
           </div>
 
           <nav className="space-y-4">
             <button
               onClick={() => setActiveTab('users')}
-              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-lg font-medium transition-colors ${activeTab === 'users' ? 'bg-cyan-500 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-lg font-medium transition-colors ${activeTab === 'users' ? 'bg-white text-black' : 'text-slate-400 hover:bg-slate-800'}`}
             >
               <Users className="w-6 h-6" /> User Directory
             </button>
             <button
               onClick={() => setActiveTab('appointments')}
-              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-lg font-medium transition-colors ${activeTab === 'appointments' ? 'bg-cyan-500 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-lg font-medium transition-colors ${activeTab === 'appointments' ? 'bg-white text-black' : 'text-slate-400 hover:bg-slate-800'}`}
             >
               <Calendar className="w-6 h-6" /> Operations Schedule
             </button>
             <button
               onClick={() => setActiveTab('alerts')}
-              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-lg font-medium transition-colors ${activeTab === 'alerts' ? 'bg-cyan-500 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-lg font-medium transition-colors ${activeTab === 'alerts' ? 'bg-white text-black' : 'text-slate-400 hover:bg-slate-800'}`}
             >
               <AlertTriangle className="w-6 h-6" /> Health Alerts
             </button>
@@ -81,7 +81,7 @@ export default function AdminDashboard() {
           </div>
           <button
             onClick={handleLogout}
-            className="w-full bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white flex items-center justify-center gap-3 py-3 rounded-xl transition-all"
+            className="w-full bg-slate-800 hover:bg-white text-slate-300 hover:text-black flex items-center justify-center gap-3 py-3 rounded-xl transition-all"
           >
             <LogOut className="w-5 h-5" /> Logout
           </button>
@@ -115,12 +115,12 @@ export default function AdminDashboard() {
                     <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="py-4 font-medium">{u.username}</td>
                       <td className="py-4">
-                        <span className={`px-3 py-1 rounded-full text-sm font-bold ${u.role === 'ELDER' ? 'bg-indigo-50 text-indigo-600' : u.role === 'ADMIN' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                        <span className={`px-3 py-1 rounded-full text-sm font-bold ${u.role === 'ELDER' ? 'bg-slate-800 text-white' : u.role === 'ADMIN' ? 'bg-slate-200 text-slate-900 border border-slate-400' : 'bg-slate-100 text-slate-600'}`}>
                           {u.role}
                         </span>
                       </td>
                       <td className="py-4 text-slate-500">{u.email}</td>
-                      <td className="py-4 font-mono text-cyan-600">{u.invite_code || 'N/A'}</td>
+                      <td className="py-4 font-mono text-slate-700">{u.invite_code || 'N/A'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
                       <td className="py-4 text-slate-500">{a.clinic_name}</td>
                       <td className="py-4">{new Date(a.scheduled_at).toLocaleString()}</td>
                       <td className="py-4">
-                        <span className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-sm font-bold uppercase">
+                        <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-sm font-bold uppercase">
                           {a.status}
                         </span>
                       </td>
@@ -166,20 +166,20 @@ export default function AdminDashboard() {
             <h3 className="text-2xl font-bold mb-6 text-slate-800">Critical Patient Alerts</h3>
             <div className="space-y-6">
               {alerts.map(a => (
-                <div key={a.id} className={`p-6 rounded-2xl border flex items-center justify-between transition-all ${a.is_resolved ? 'bg-slate-50 border-slate-200' : 'bg-red-50/60 border-red-200'}`}>
+                <div key={a.id} className={`p-6 rounded-2xl border flex items-center justify-between transition-all ${a.is_resolved ? 'bg-slate-50 border-slate-200' : 'bg-slate-900 border-black'}`}>
                   <div>
                     <div className="flex items-center gap-3 mb-2">
-                      <span className={`px-3 py-1 rounded-full text-xs font-black uppercase ${a.is_resolved ? 'bg-slate-200 text-slate-600' : 'bg-red-600 text-white'}`}>
+                      <span className={`px-3 py-1 rounded-full text-xs font-black uppercase ${a.is_resolved ? 'bg-slate-200 text-slate-600' : 'bg-white text-black'}`}>
                         {a.severity}
                       </span>
-                      <span className="text-sm text-slate-500">{new Date(a.created_at).toLocaleString()}</span>
+                      <span className={`text-sm ${a.is_resolved ? 'text-slate-500' : 'text-slate-400'}`}>{new Date(a.created_at).toLocaleString()}</span>
                     </div>
-                    <p className={`text-xl font-semibold ${a.is_resolved ? 'text-slate-500 line-through' : 'text-slate-800'}`}>{a.message}</p>
+                    <p className={`text-xl font-semibold ${a.is_resolved ? 'text-slate-500 line-through' : 'text-white'}`}>{a.message}</p>
                   </div>
                   {!a.is_resolved && (
                     <button
                       onClick={() => resolveAlert(a.id)}
-                      className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-md hover:shadow-lg"
+                      className="bg-white hover:bg-slate-200 text-black font-bold px-6 py-3 rounded-xl transition-all shadow-md hover:shadow-lg"
                     >
                       Resolve Warning
                     </button>

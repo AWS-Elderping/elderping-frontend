@@ -9,10 +9,10 @@ import { queryAI } from '../api/aiApi';
 export function RiskScoreWidget({ riskScore = 'LOW' }) {
   const normalized = (riskScore || 'LOW').toUpperCase();
   const colors = {
-    LOW: 'bg-green-100 text-green-800 border-green-300',
-    MEDIUM: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-    HIGH: 'bg-orange-100 text-orange-800 border-orange-300',
-    CRITICAL: 'bg-red-100 text-red-800 border-red-300 animate-pulse'
+    LOW: 'bg-gray-100 text-gray-700 border-gray-300',
+    MEDIUM: 'bg-gray-200 text-gray-800 border-gray-400',
+    HIGH: 'bg-gray-700 text-white border-gray-800',
+    CRITICAL: 'bg-black text-white border-black animate-pulse'
   };
   const labels = {
     LOW: 'Clinical Status Stable',
@@ -65,14 +65,14 @@ export function HealthSummaryWidget({ summary }) {
   };
 
   return (
-    <div className="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-indigo-50 shadow-md">
+    <div className="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-gray-200 shadow-md">
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-          <Activity className="w-6 h-6 text-pink-500" /> Vitals Summary
+          <Activity className="w-6 h-6 text-gray-700" /> Vitals Summary
         </h3>
         <button
           onClick={() => setUseImperial(!useImperial)}
-          className="text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors"
+          className="text-xs font-bold text-gray-900 bg-gray-100 border border-gray-200 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition-colors"
         >
           Display: {useImperial ? 'Metric (°C/kg)' : 'Imperial (°F/lbs)'}
         </button>
@@ -93,7 +93,7 @@ export function HealthSummaryWidget({ summary }) {
         </div>
         <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-100">
           <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Oxygen Sat (SpO2)</p>
-          <p className="text-2xl font-extrabold text-red-600 mt-1">
+          <p className="text-2xl font-extrabold text-gray-900 mt-1">
             {summary.oxygen_saturation ? `${summary.oxygen_saturation}%` : '—'}
           </p>
         </div>
@@ -135,10 +135,10 @@ export function MedicationWidget({ reminders = [], compliance, onMarkTaken, medL
     <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-          <Pill className="w-6 h-6 text-purple-600" /> Medications Log
+          <Pill className="w-6 h-6 text-gray-700" /> Medications Log
         </h3>
         {adherence !== null && (
-          <span className="text-xs font-bold bg-purple-50 text-purple-700 px-3 py-1.5 rounded-full border border-purple-100">
+          <span className="text-xs font-bold bg-gray-100 text-gray-800 px-3 py-1.5 rounded-full border border-gray-300">
             Adherence Score: {adherence}%
           </span>
         )}
@@ -161,15 +161,15 @@ export function MedicationWidget({ reminders = [], compliance, onMarkTaken, medL
                   disabled={r.taken || medLoading === r.id}
                   className={`px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-sm ${
                     r.taken
-                      ? 'bg-green-100 text-green-700 border border-green-200 cursor-default'
-                      : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white active:scale-95'
+                      ? 'bg-gray-800 text-white border border-gray-800 cursor-default'
+                      : 'bg-black hover:bg-gray-800 text-white active:scale-95'
                   }`}
                 >
                   {medLoading === r.id ? '…' : r.taken ? 'Taken' : 'Mark Taken'}
                 </button>
               ) : (
                 <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${
-                  r.taken ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-yellow-100 text-yellow-700 border border-yellow-200'
+                  r.taken ? 'bg-gray-800 text-white border border-gray-800' : 'bg-gray-100 text-gray-600 border border-gray-300'
                 }`}>
                   {r.taken ? 'Taken' : 'Pending'}
                 </span>
@@ -191,7 +191,7 @@ export function AppointmentWidget({ appointments = [] }) {
   return (
     <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
       <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
-        <Calendar className="w-6 h-6 text-indigo-600" /> Upcoming Appointments
+        <Calendar className="w-6 h-6 text-gray-700" /> Upcoming Appointments
       </h3>
 
       {upcoming.length === 0 ? (
@@ -202,11 +202,11 @@ export function AppointmentWidget({ appointments = [] }) {
             <li key={appt.id} className="py-3.5">
               <div className="flex items-center justify-between gap-2">
                 <p className="font-extrabold text-gray-800 leading-tight">Dr. {appt.doctor_name}</p>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full border border-indigo-100">
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-800 px-2.5 py-1 rounded-full border border-gray-300">
                   {appt.status}
                 </span>
               </div>
-              <p className="text-xs font-bold text-indigo-500 mt-1">
+              <p className="text-xs font-bold text-gray-500 mt-1">
                 {appt.doctor_specialty ? `${appt.doctor_specialty} • ` : ''}
                 {appt.clinic_name || appt.hospital_name || 'Clinic'}
               </p>
@@ -229,17 +229,17 @@ export function AlertWidget({ alerts = [] }) {
   if (activeAlerts.length === 0) return null;
 
   return (
-    <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-5 shadow-sm mb-6">
-      <h4 className="text-red-800 font-extrabold text-lg flex items-center gap-2 mb-2">
-        <AlertTriangle className="w-5.5 h-5.5 text-red-600" /> Clinical Action Alerts ({activeAlerts.length})
+    <div className="bg-gray-900 border-2 border-black rounded-2xl p-5 shadow-sm mb-6">
+      <h4 className="text-white font-extrabold text-lg flex items-center gap-2 mb-2">
+        <AlertTriangle className="w-5.5 h-5.5 text-white" /> Clinical Action Alerts ({activeAlerts.length})
       </h4>
-      <ul className="divide-y divide-red-100 max-h-40 overflow-y-auto">
+      <ul className="divide-y divide-gray-700 max-h-40 overflow-y-auto">
         {activeAlerts.map(a => (
-          <li key={a.id} className="py-2.5 flex items-start gap-2 text-sm text-red-900 font-semibold">
+          <li key={a.id} className="py-2.5 flex items-start gap-2 text-sm text-white font-semibold">
             <span className="mt-0.5">•</span>
             <div>
               <p className="leading-tight">{a.message}</p>
-              <p className="text-[10px] text-red-500 font-bold uppercase tracking-wide mt-1">Severity: {a.severity} • {new Date(a.created_at).toLocaleString()}</p>
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wide mt-1">Severity: {a.severity} • {new Date(a.created_at).toLocaleString()}</p>
             </div>
           </li>
         ))}
@@ -255,20 +255,20 @@ export function TimelineWidget({ timeline = [] }) {
   return (
     <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
       <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2 mb-6">
-        <Clock className="w-6 h-6 text-indigo-600" /> Chronological Timeline
+        <Clock className="w-6 h-6 text-gray-700" /> Chronological Timeline
       </h3>
 
       {timeline.length === 0 ? (
         <p className="text-gray-400 text-center py-12 font-medium">No events logged yet.</p>
       ) : (
-        <div className="relative border-l-2 border-indigo-100 ml-4 pl-6 space-y-6 max-h-[500px] overflow-y-auto pr-2">
+        <div className="relative border-l-2 border-gray-200 ml-4 pl-6 space-y-6 max-h-[500px] overflow-y-auto pr-2">
           {timeline.map((event) => (
             <div key={event.id} className="relative">
               {/* Bullet circle */}
-              <div className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-indigo-600 border-2 border-white shadow-sm" />
-              
+              <div className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-gray-800 border-2 border-white shadow-sm" />
+
               <div className="bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-500">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
                   {event.eventType}
                 </span>
                 <h4 className="font-extrabold text-gray-800 text-base leading-tight mt-0.5">{event.title}</h4>
@@ -341,25 +341,25 @@ export function DocumentWidget({ documents = [], onUpload, onDownload, onDelete,
   return (
     <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
       <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2 mb-5">
-        <FileText className="w-6 h-6 text-pink-500" /> Medical Documents
+        <FileText className="w-6 h-6 text-gray-700" /> Medical Documents
       </h3>
 
       {/* Upload Form */}
       {onUpload && (
-        <form onSubmit={handleSubmit} className="mb-5 bg-pink-50/20 p-4 rounded-xl border border-pink-100 flex flex-col gap-3">
+        <form onSubmit={handleSubmit} className="mb-5 bg-gray-50 p-4 rounded-xl border border-gray-200 flex flex-col gap-3">
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               id="doc-file-input"
               type="file"
               accept=".pdf,.png,.jpg,.jpeg"
               onChange={(e) => setDocForm({ ...docForm, file: e.target.files[0] })}
-              className="flex-1 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 text-gray-600 focus:outline-none"
+              className="flex-1 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-gray-200 file:text-gray-800 hover:file:bg-gray-300 text-gray-600 focus:outline-none"
               required
             />
             <select
               value={docForm.type}
               onChange={(e) => setDocForm({ ...docForm, type: e.target.value })}
-              className="bg-white border-2 border-indigo-100 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-700 focus:outline-none"
+              className="bg-white border-2 border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-700 focus:outline-none"
             >
               <option value="PRESCRIPTION">Prescription</option>
               <option value="LAB_REPORT">Lab Report</option>
@@ -371,7 +371,7 @@ export function DocumentWidget({ documents = [], onUpload, onDownload, onDelete,
           <button
             type="submit"
             disabled={uploadLoading || !docForm.file}
-            className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold text-xs py-2 px-4 rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-50"
+            className="w-full bg-black hover:bg-gray-800 text-white font-bold text-xs py-2 px-4 rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-50"
           >
             <Upload className="w-4 h-4" /> {uploadLoading ? 'Uploading…' : 'Upload File'}
           </button>
@@ -386,7 +386,7 @@ export function DocumentWidget({ documents = [], onUpload, onDownload, onDelete,
             <li key={doc.id} className="py-3 flex items-center justify-between gap-4">
               <div>
                 <p className="font-extrabold text-gray-800 leading-snug">{doc.file_name}</p>
-                <p className="text-[10px] font-bold text-pink-500 uppercase tracking-wide mt-0.5">
+                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mt-0.5">
                   {doc.document_type}
                 </p>
               </div>
@@ -403,10 +403,10 @@ export function DocumentWidget({ documents = [], onUpload, onDownload, onDelete,
                   <button
                     onClick={() => handleDelete(doc)}
                     disabled={deletingId === doc.id}
-                    className="bg-red-50 border border-red-200 hover:bg-red-100 rounded-lg p-2.5 transition-colors"
+                    className="bg-gray-100 border border-gray-300 hover:bg-gray-200 rounded-lg p-2.5 transition-colors"
                     title="Delete document"
                   >
-                    <XCircle className={`w-4 h-4 text-red-600 ${deletingId === doc.id ? 'animate-spin' : ''}`} />
+                    <XCircle className={`w-4 h-4 text-gray-700 ${deletingId === doc.id ? 'animate-spin' : ''}`} />
                   </button>
                 )}
               </div>
@@ -546,23 +546,23 @@ export function BloodPressureChart({ data = [] }) {
         
         {points.length > 1 && (
           <>
-            <path d={sysPath} fill="none" stroke="#ef4444" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
-            <path d={diaPath} fill="none" stroke="#3b82f6" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+            <path d={sysPath} fill="none" stroke="#111827" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+            <path d={diaPath} fill="none" stroke="#9ca3af" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
           </>
         )}
-        
+
         {points.map((p, idx) => (
           <g key={idx}>
-            <circle cx={getX(idx)} cy={getY(p.sys)} r={4} fill="#ef4444" stroke="#fff" strokeWidth={1.5} />
-            <circle cx={getX(idx)} cy={getY(p.dia)} r={4} fill="#3b82f6" stroke="#fff" strokeWidth={1.5} />
+            <circle cx={getX(idx)} cy={getY(p.sys)} r={4} fill="#111827" stroke="#fff" strokeWidth={1.5} />
+            <circle cx={getX(idx)} cy={getY(p.dia)} r={4} fill="#9ca3af" stroke="#fff" strokeWidth={1.5} />
           </g>
         ))}
       </svg>
       <div className="flex justify-between text-[10px] text-gray-400 mt-1.5 font-bold uppercase tracking-wide">
         <span>{points[0].date.toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
         <span className="flex gap-2">
-          <span>Sys: <strong className="text-red-500">{points[points.length - 1].sys}</strong></span>
-          <span>Dia: <strong className="text-blue-500">{points[points.length - 1].dia}</strong></span>
+          <span>Sys: <strong className="text-gray-900">{points[points.length - 1].sys}</strong></span>
+          <span>Dia: <strong className="text-gray-500">{points[points.length - 1].dia}</strong></span>
         </span>
         <span>{points[points.length - 1].date.toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
       </div>
@@ -614,7 +614,7 @@ export function AdherenceTrendChart({ weekly, monthly, overall }) {
           rx={6}
           fill="url(#weeklyGrad)"
         />
-        <text x={80} y={height - padding - getBarHeight(weeklyVal) - 6} textAnchor="middle" className="text-[10px] font-extrabold fill-purple-700">
+        <text x={80} y={height - padding - getBarHeight(weeklyVal) - 6} textAnchor="middle" className="text-[10px] font-extrabold fill-gray-600">
           {weeklyVal}%
         </text>
         <text x={80} y={height - padding + 12} textAnchor="middle" className="text-[10px] font-bold fill-gray-500">
@@ -630,7 +630,7 @@ export function AdherenceTrendChart({ weekly, monthly, overall }) {
           rx={6}
           fill="url(#monthlyGrad)"
         />
-        <text x={200} y={height - padding - getBarHeight(monthlyVal) - 6} textAnchor="middle" className="text-[10px] font-extrabold fill-indigo-700">
+        <text x={200} y={height - padding - getBarHeight(monthlyVal) - 6} textAnchor="middle" className="text-[10px] font-extrabold fill-gray-700">
           {monthlyVal}%
         </text>
         <text x={200} y={height - padding + 12} textAnchor="middle" className="text-[10px] font-bold fill-gray-500">
@@ -646,7 +646,7 @@ export function AdherenceTrendChart({ weekly, monthly, overall }) {
           rx={6}
           fill="url(#overallGrad)"
         />
-        <text x={320} y={height - padding - getBarHeight(overallVal) - 6} textAnchor="middle" className="text-[10px] font-extrabold fill-pink-700">
+        <text x={320} y={height - padding - getBarHeight(overallVal) - 6} textAnchor="middle" className="text-[10px] font-extrabold fill-gray-900">
           {overallVal}%
         </text>
         <text x={320} y={height - padding + 12} textAnchor="middle" className="text-[10px] font-bold fill-gray-500">
@@ -656,16 +656,16 @@ export function AdherenceTrendChart({ weekly, monthly, overall }) {
         {/* Gradients */}
         <defs>
           <linearGradient id="weeklyGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#a855f7" />
-            <stop offset="100%" stopColor="#c084fc" />
+            <stop offset="0%" stopColor="#9ca3af" />
+            <stop offset="100%" stopColor="#d1d5db" />
           </linearGradient>
           <linearGradient id="monthlyGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6366f1" />
-            <stop offset="100%" stopColor="#818cf8" />
+            <stop offset="0%" stopColor="#4b5563" />
+            <stop offset="100%" stopColor="#9ca3af" />
           </linearGradient>
           <linearGradient id="overallGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ec4899" />
-            <stop offset="100%" stopColor="#f472b6" />
+            <stop offset="0%" stopColor="#111827" />
+            <stop offset="100%" stopColor="#4b5563" />
           </linearGradient>
         </defs>
       </svg>
@@ -724,27 +724,27 @@ export function NotesWidget({ elderId }) {
   };
 
   const categoryColors = {
-    PATIENT:   'bg-blue-100 text-blue-700',
-    FAMILY:    'bg-green-100 text-green-700',
-    CAREGIVER: 'bg-orange-100 text-orange-700',
-    DOCTOR:    'bg-purple-100 text-purple-700',
-    AI:        'bg-pink-100 text-pink-700',
+    PATIENT:   'bg-gray-200 text-gray-800',
+    FAMILY:    'bg-gray-300 text-gray-900',
+    CAREGIVER: 'bg-gray-400 text-white',
+    DOCTOR:    'bg-gray-700 text-white',
+    AI:        'bg-black text-white',
   };
 
   return (
     <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
       <h3 className="font-bold text-gray-800 flex items-center gap-2 mb-4">
-        <StickyNote className="w-5 h-5 text-indigo-500" /> Clinical Notes
+        <StickyNote className="w-5 h-5 text-gray-700" /> Clinical Notes
       </h3>
 
-      {error && <p className="text-red-600 text-sm mb-3 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+      {error && <p className="text-gray-900 text-sm mb-3 bg-gray-100 px-3 py-2 rounded-lg">{error}</p>}
 
       <form onSubmit={handleAdd} className="mb-4 space-y-2">
         <div className="flex gap-2">
           <select
             value={category}
             onChange={e => setCategory(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:border-indigo-400"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:border-black"
           >
             <option value="PATIENT">Patient</option>
             <option value="FAMILY">Family</option>
@@ -755,7 +755,7 @@ export function NotesWidget({ elderId }) {
             type="button"
             onClick={handleAiNote}
             disabled={aiGen}
-            className="flex items-center gap-1 bg-purple-100 hover:bg-purple-200 text-purple-700 text-sm font-semibold px-3 py-2 rounded-lg transition-colors disabled:opacity-50"
+            className="flex items-center gap-1 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold px-3 py-2 rounded-lg transition-colors disabled:opacity-50"
           >
             <Sparkles className="w-4 h-4" />
             {aiGen ? 'Generating…' : 'AI Note'}
@@ -767,12 +767,12 @@ export function NotesWidget({ elderId }) {
             value={text}
             onChange={e => setText(e.target.value)}
             placeholder="Add a note…"
-            className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+            className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-black"
           />
           <button
             type="submit"
             disabled={saving || !text.trim()}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors disabled:opacity-50"
+            className="bg-black hover:bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors disabled:opacity-50"
           >
             {saving ? '…' : 'Add'}
           </button>
@@ -786,7 +786,7 @@ export function NotesWidget({ elderId }) {
       ) : (
         <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
           {notes.map(note => (
-            <div key={note.id} className="border border-gray-100 rounded-xl p-3 hover:border-indigo-100 transition-colors">
+            <div key={note.id} className="border border-gray-100 rounded-xl p-3 hover:border-gray-300 transition-colors">
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${categoryColors[note.note_category] || 'bg-gray-100 text-gray-600'}`}>
@@ -796,7 +796,7 @@ export function NotesWidget({ elderId }) {
                     {note.author_name || 'Unknown'} · {new Date(note.created_at).toLocaleDateString()}
                   </span>
                 </div>
-                <button onClick={() => handleDelete(note.id)} className="text-gray-300 hover:text-red-400 transition-colors">
+                <button onClick={() => handleDelete(note.id)} className="text-gray-300 hover:text-black transition-colors">
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -831,19 +831,20 @@ export function AIChatWidget({ userId }) {
   };
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-indigo-50 p-6 rounded-2xl border border-purple-100 shadow-sm">
+    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-sm">
       <h3 className="font-bold text-gray-800 flex items-center gap-2 mb-4">
-        <Sparkles className="w-5 h-5 text-purple-500" />
+        <Sparkles className="w-5 h-5 text-gray-700" />
         AI Health Assistant
-        <span className="ml-auto text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-semibold">Nova Lite</span>
+        <span className="ml-auto text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full font-semibold">Nova Lite</span>
       </h3>
 
       <form onSubmit={handleAsk} className="space-y-3 mb-4">
         <select
           value={capability}
           onChange={e => setCap(e.target.value)}
-          className="w-full border border-purple-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-300"
+          className="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-400"
         >
+          <option value="document_qa">Ask About My Documents</option>
           <option value="qa">General Q&amp;A</option>
           <option value="symptom_check">Symptom Check</option>
           <option value="medication">Medication Advice</option>
@@ -855,23 +856,23 @@ export function AIChatWidget({ userId }) {
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Ask a health question…"
-            className="flex-1 border border-purple-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 bg-white"
+            className="flex-1 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 bg-white"
           />
           <button
             type="submit"
             disabled={loading || !query.trim()}
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-opacity disabled:opacity-50"
+            className="bg-black hover:bg-gray-800 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-opacity disabled:opacity-50"
           >
             {loading ? '…' : 'Ask'}
           </button>
         </div>
       </form>
 
-      {error && <p className="text-red-600 text-sm bg-red-50 px-3 py-2 rounded-xl mb-3">{error}</p>}
+      {error && <p className="text-gray-900 text-sm bg-gray-100 px-3 py-2 rounded-xl mb-3">{error}</p>}
 
       {response ? (
-        <div className="bg-white rounded-xl p-4 border border-purple-100 shadow-sm">
-          <p className="text-xs font-bold text-purple-600 mb-2 flex items-center gap-1">
+        <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+          <p className="text-xs font-bold text-gray-700 mb-2 flex items-center gap-1">
             <Sparkles className="w-3.5 h-3.5" /> AI Response
           </p>
           <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{response}</p>
