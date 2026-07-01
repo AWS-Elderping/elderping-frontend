@@ -141,8 +141,8 @@ export default function DoctorDashboard() {
         </div>
         <div className="flex items-center gap-4 relative z-10">
           <button
-            onClick={fetchData}
-            disabled={loading || !selectedElderId}
+            onClick={() => { fetchPatients(); fetchData(); }}
+            disabled={loading}
             className="flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-md px-4 py-2.5 rounded-xl font-semibold transition-all shadow-md border border-white/10"
           >
             <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />

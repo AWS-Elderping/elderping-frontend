@@ -412,8 +412,8 @@ export default function FamilyDashboard() {
                       <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                         <Plus className="w-6 h-6 text-gray-700" /> Add Medication
                       </h2>
-                      <form onSubmit={handleAddMed} className="flex flex-col md:flex-row gap-4">
-                        <input type="text" placeholder="Medication Name" value={medForm.name} onChange={e=>setMedForm({...medForm, name: e.target.value})} className="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 font-medium text-gray-800 focus:border-black focus:outline-none" required />
+                      <form onSubmit={handleAddMed} className="flex flex-col md:flex-row md:flex-wrap gap-4">
+                        <input type="text" placeholder="Medication Name" value={medForm.name} onChange={e=>setMedForm({...medForm, name: e.target.value})} className="flex-1 min-w-[180px] bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 font-medium text-gray-800 focus:border-black focus:outline-none" required />
                         <input type="text" placeholder="Dosage (e.g. 1 pill)" value={medForm.dosage} onChange={e=>setMedForm({...medForm, dosage: e.target.value})} className="w-full md:w-40 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 font-medium text-gray-800 focus:border-black focus:outline-none" required />
                         <select value={medForm.frequency} onChange={e=>setMedForm({...medForm, frequency: e.target.value})} className="w-full md:w-36 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 font-medium text-gray-800 focus:border-black focus:outline-none">
                           <option value="DAILY">Daily</option>
