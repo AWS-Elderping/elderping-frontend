@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, AlertCircle, LogOut, Terminal, DollarSign, BrainCircuit, CheckCircle, XCircle } from 'lucide-react';
 import { getFinopsDashboard, getFinopsRecommendations, applyRecommendation, dismissRecommendation } from '../api/finopsApi';
+import { listAuditEvents } from '../api/auditApi';
+import { getAiInteractions } from '../api/aiApi';
 
 export default function SuperAdminDashboard() {
   const navigate = useNavigate();
@@ -15,15 +17,13 @@ export default function SuperAdminDashboard() {
   const [recommendations, setRecommendations] = useState([]);
   const [recsLoading, setRecsLoading] = useState(false);
 
-  const [auditLogs] = useState([
-    { id: '1', action_type: 'READ_PATIENT_RECORDS', resource: 'health_logs', actor: 'daughter', status: 'SUCCESS', created_at: '2026-06-17T11:20:00Z', ip: '192.168.1.45' },
-    { id: '2', action_type: 'ROLE_ELEVATION_ATTEMPT', resource: 'users', actor: 'malicious_user', status: 'FAILURE', created_at: '2026-06-17T10:45:00Z', ip: '198.51.100.12' }
-  ]);
+  const [auditLogs, setAuditLogs] = useState([]);
+  const [auditLoading, setAuditLoading] = useState(false);
+  const [auditError, setAuditError] = useState(null);
 
-  const [aiUsage] = useState([
-    { id: '1', model: 'anthropic.claude-3-haiku', capability: 'symptom_check', input_tokens: 420, output_tokens: 310, cost: 0.00043, created_at: '2026-06-17T11:05:00Z' },
-    { id: '2', model: 'anthropic.claude-3-haiku', capability: 'risk_analysis', input_tokens: 1250, output_tokens: 420, cost: 0.00084, created_at: '2026-06-17T10:30:00Z' }
-  ]);
+  const [aiUsage, setAiUsage] = useState([]);
+  const [aiUsageLoading, setAiUsageLoading] = useState(false);
+  const [aiUsageError, setAiUsageError] = useState(null);
 
   useEffect(() => {
     const raw = localStorage.getItem('user');
@@ -56,6 +56,38 @@ export default function SuperAdminDashboard() {
 
     loadFinops();
   }, [navigate]);
+
+  const loadAuditLogs = async () => {
+    setAuditLoading(true);
+    setAuditError(null);
+    try {
+      const result = await listAuditEvents();
+      setAuditLogs(result.events || []);
+    } catch (err) {
+      setAuditError(err.message);
+    } finally {
+      setAuditLoading(false);
+    }
+  };
+
+  const loadAiUsage = async () => {
+    setAiUsageLoading(true);
+    setAiUsageError(null);
+    try {
+      const result = await getAiInteractions();
+      setAiUsage(Array.isArray(result) ? result : []);
+    } catch (err) {
+      setAiUsageError(err.message);
+    } finally {
+      setAiUsageLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'audit' && auditLogs.length === 0 && !auditLoading) loadAuditLogs();
+    if (activeTab === 'ai' && aiUsage.length === 0 && !aiUsageLoading) loadAiUsage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -241,7 +273,19 @@ export default function SuperAdminDashboard() {
 
         {activeTab === 'audit' && (
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
-            <h3 className="text-2xl font-bold mb-6 text-white">Security Audit Ledgers</h3>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-white">Security Audit Ledgers</h3>
+              <button
+                onClick={loadAuditLogs}
+                disabled={auditLoading}
+                className="text-sm font-semibold px-4 py-2 rounded-lg bg-slate-800 hover:bg-white text-slate-300 hover:text-black transition-colors disabled:opacity-50"
+              >
+                {auditLoading ? 'Refreshing...' : 'Refresh'}
+              </button>
+            </div>
+            {auditError && (
+              <div className="bg-slate-800 border border-slate-700 rounded-2xl p-4 mb-6 text-white">{auditError}</div>
+            )}
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -249,24 +293,24 @@ export default function SuperAdminDashboard() {
                     <th className="py-4">Time</th>
                     <th className="py-4">Action</th>
                     <th className="py-4">Entity</th>
-                    <th className="py-4">User Subject</th>
+                    <th className="py-4">Actor</th>
+                    <th className="py-4">Role</th>
                     <th className="py-4">IP Address</th>
-                    <th className="py-4">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-850 text-slate-300 text-lg">
-                  {auditLogs.map(l => (
+                  {auditLoading ? (
+                    <tr><td colSpan="6" className="py-8 text-center text-slate-500">Loading...</td></tr>
+                  ) : auditLogs.length === 0 ? (
+                    <tr><td colSpan="6" className="py-8 text-center text-slate-500">No audit events recorded yet.</td></tr>
+                  ) : auditLogs.map(l => (
                     <tr key={l.id} className="hover:bg-slate-950/40 transition-colors">
-                      <td className="py-4">{new Date(l.created_at).toLocaleTimeString()}</td>
-                      <td className="py-4 font-mono text-slate-200 text-sm">{l.action_type}</td>
+                      <td className="py-4">{new Date(l.created_at).toLocaleString()}</td>
+                      <td className="py-4 font-mono text-slate-200 text-sm">{l.action}</td>
                       <td className="py-4 text-slate-500">{l.resource}</td>
-                      <td className="py-4 font-medium">{l.actor}</td>
-                      <td className="py-4 font-mono text-xs text-slate-400">{l.ip}</td>
-                      <td className="py-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-black uppercase ${l.status === 'SUCCESS' ? 'bg-slate-700 text-slate-200' : 'bg-white text-black'}`}>
-                          {l.status}
-                        </span>
-                      </td>
+                      <td className="py-4 font-medium">{l.actor_email || l.actor_id}</td>
+                      <td className="py-4 text-slate-400 text-sm uppercase">{l.actor_role}</td>
+                      <td className="py-4 font-mono text-xs text-slate-400">{l.ip_address || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -277,7 +321,19 @@ export default function SuperAdminDashboard() {
 
         {activeTab === 'ai' && (
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
-            <h3 className="text-2xl font-bold mb-6 text-white">AWS Bedrock Token Transactions</h3>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-white">AWS Bedrock Token Transactions</h3>
+              <button
+                onClick={loadAiUsage}
+                disabled={aiUsageLoading}
+                className="text-sm font-semibold px-4 py-2 rounded-lg bg-slate-800 hover:bg-white text-slate-300 hover:text-black transition-colors disabled:opacity-50"
+              >
+                {aiUsageLoading ? 'Refreshing...' : 'Refresh'}
+              </button>
+            </div>
+            {aiUsageError && (
+              <div className="bg-slate-800 border border-slate-700 rounded-2xl p-4 mb-6 text-white">{aiUsageError}</div>
+            )}
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -291,14 +347,18 @@ export default function SuperAdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-850 text-slate-300 text-lg">
-                  {aiUsage.map(a => (
+                  {aiUsageLoading ? (
+                    <tr><td colSpan="6" className="py-8 text-center text-slate-500">Loading...</td></tr>
+                  ) : aiUsage.length === 0 ? (
+                    <tr><td colSpan="6" className="py-8 text-center text-slate-500">No AI usage recorded yet.</td></tr>
+                  ) : aiUsage.map(a => (
                     <tr key={a.id} className="hover:bg-slate-950/40 transition-colors">
                       <td className="py-4">{new Date(a.created_at).toLocaleTimeString()}</td>
-                      <td className="py-4 font-mono text-xs">{a.model}</td>
+                      <td className="py-4 font-mono text-xs">{a.model_id}</td>
                       <td className="py-4 font-medium uppercase text-sm">{a.capability}</td>
                       <td className="py-4 text-slate-400">{a.input_tokens}</td>
                       <td className="py-4 text-slate-400">{a.output_tokens}</td>
-                      <td className="py-4 font-mono text-slate-200 text-sm">${a.cost.toFixed(5)}</td>
+                      <td className="py-4 font-mono text-slate-200 text-sm">${parseFloat(a.estimated_cost || 0).toFixed(5)}</td>
                     </tr>
                   ))}
                 </tbody>

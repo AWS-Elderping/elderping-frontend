@@ -12,6 +12,7 @@ import {
   deleteDocument 
 } from '../api/healthApi';
 import { createReminder as addReminder, getReminders } from '../api/reminderApi';
+import { createAppointment } from '../api/appointmentApi';
 import {
   RiskScoreWidget,
   AlertWidget,
@@ -54,6 +55,10 @@ export default function FamilyDashboard() {
   // Add Med form
   const [medForm, setMedForm] = useState({ name: '', dosage: '', time: '08:00', frequency: 'DAILY' });
   const [medLoading, setMedLoading] = useState(false);
+
+  // Add Appointment form
+  const [apptForm, setApptForm] = useState({ doctorName: '', clinicName: '', date: '', time: '09:00', notes: '' });
+  const [apptLoading, setApptLoading] = useState(false);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -144,6 +149,27 @@ export default function FamilyDashboard() {
       alert("Failed to add medication: " + (err.response?.data?.error || err.message));
     } finally {
       setMedLoading(false);
+    }
+  };
+
+  const handleAddAppointment = async (e) => {
+    e.preventDefault();
+    if (!selectedElderId || !apptForm.doctorName || !apptForm.date || !apptForm.time) return;
+    setApptLoading(true);
+    try {
+      await createAppointment({
+        elderId: selectedElderId,
+        doctorName: apptForm.doctorName,
+        clinicName: apptForm.clinicName || undefined,
+        scheduledAt: new Date(`${apptForm.date}T${apptForm.time}:00`).toISOString(),
+        notes: apptForm.notes || undefined
+      });
+      setApptForm({ doctorName: '', clinicName: '', date: '', time: '09:00', notes: '' });
+      fetchData();
+    } catch (err) {
+      alert("Failed to add appointment: " + (err.response?.data?.error || err.message));
+    } finally {
+      setApptLoading(false);
     }
   };
 
@@ -436,6 +462,25 @@ export default function FamilyDashboard() {
 
                   <div className="space-y-6">
                     <RiskScoreWidget riskScore={latestRisk} />
+
+                    <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-lg p-6 border border-white/60">
+                      <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <Clock className="w-6 h-6 text-gray-700" /> Add Appointment
+                      </h2>
+                      <form onSubmit={handleAddAppointment} className="flex flex-col gap-3">
+                        <input type="text" placeholder="Doctor Name" value={apptForm.doctorName} onChange={e=>setApptForm({...apptForm, doctorName: e.target.value})} className="bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 font-medium text-gray-800 focus:border-black focus:outline-none" required />
+                        <input type="text" placeholder="Clinic / Hospital (optional)" value={apptForm.clinicName} onChange={e=>setApptForm({...apptForm, clinicName: e.target.value})} className="bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 font-medium text-gray-800 focus:border-black focus:outline-none" />
+                        <div className="flex gap-3">
+                          <input type="date" value={apptForm.date} onChange={e=>setApptForm({...apptForm, date: e.target.value})} className="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-800 focus:border-black focus:outline-none" required />
+                          <input type="time" value={apptForm.time} onChange={e=>setApptForm({...apptForm, time: e.target.value})} className="w-32 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-800 focus:border-black focus:outline-none" required />
+                        </div>
+                        <input type="text" placeholder="Notes (optional)" value={apptForm.notes} onChange={e=>setApptForm({...apptForm, notes: e.target.value})} className="bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 font-medium text-gray-800 focus:border-black focus:outline-none" />
+                        <button type="submit" disabled={apptLoading} className="bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-xl shadow-md transition-all active:scale-95 disabled:opacity-50">
+                          {apptLoading ? 'Booking...' : 'Book Appointment'}
+                        </button>
+                      </form>
+                    </div>
+
                     <AppointmentWidget appointments={dashboardData?.appointments || []} />
                   </div>
                 </div>

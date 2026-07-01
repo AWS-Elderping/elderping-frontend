@@ -816,7 +816,7 @@ export function AIChatWidget({ userId }) {
   const [query, setQuery]       = useState('');
   const [response, setResponse] = useState('');
   const [loading, setLoading]   = useState(false);
-  const [capability, setCap]    = useState('qa');
+  const [capability, setCap]    = useState('document_qa');
   const [error, setError]       = useState('');
 
   const handleAsk = async (e) => {
